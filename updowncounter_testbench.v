@@ -1,25 +1,35 @@
+`timescale 1ns/100ps
+
 module updowncounter_testbench;
-reg clk, reset,up_down;
-wire [15:0] counter;
+reg i, clk, reset, up;
+wire[0:2] q1, q2;
+wire[15:0] out;
 
-up_down_counter dut(counter,up_down,clk,reset);
+up_down_counter dut(.clk(clk), .reset(reset), .up(up), .out(out));
 
-initial begin $dumpfile("outt.vcd");
-	$dumpvars(0,updowncounter_testbench);
-	end
-
-initial begin 
-clk=0;
-forever #5 clk=~clk;
-end
 initial begin
-reset=1;
-up_down=0;
-#20;
-reset=0;
-#200;
-up_down=1;
-#200;
-up_down=0;
+  $dumpfile("out.vcd");
+  $dumpvars(0,updowncounter_testbench);
 end
-endmodule 
+
+initial clk=1'b0; always #5 clk=~clk;
+
+initial begin
+  reset = 1;
+  up = 1;
+  #10;
+  reset = 0;
+  #10;
+  up = 0;
+  #10;
+  up = 1;
+  #100;
+  up = 0;
+  #200;
+  reset = 1;
+  #20;
+  up = 1;
+  #100 $finish;
+end
+endmodule
+
